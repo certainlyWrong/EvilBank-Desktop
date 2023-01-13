@@ -15,14 +15,17 @@ class BankController:
         agency: str,
         engine: sa.engine.Engine,
     ):
+
         self.__name = name
         self.__agency = agency
         self.__engine = engine
         self.__connection = engine.connect()
         self.__session = sessionmaker(bind=self.__connection)()
+        self.__loggedAccount = None
+        self.__personLogged = None
 
     @classmethod
-    def factoryBanckController(cls, name: str, agency: str):
+    def factorybankController(cls, name: str, agency: str):
 
         dataBaseName = name.lower().replace(' ', '')
 
@@ -38,7 +41,7 @@ class BankController:
         return cls(name, agency, engine)
 
     def dispose(self):
-        self.__engine.execute('DROP DATABASE IF EXISTS evilofbanktest')
+        self.__engine.execute('DROP DATABASE IF EXISTS evilbanktest')
         self.__session.close()
         self.__connection.close()
         self.__engine.dispose()
@@ -57,7 +60,8 @@ class BankController:
     ):
         result = None
 
-        if (not personFirstName.isnumeric() and len(personFirstName) > 10
+        if (not personFirstName.isnumeric()
+                and len(personFirstName + personLastName) > 10
                 and len(personFirstName) < 255 and cpf.isnumeric()
                 and len(cpf) == 11 and not accountName.isalpha()
                 and self.checkAccountNameExists(accountName) is False):
@@ -80,7 +84,7 @@ class BankController:
                 )
 
                 if commit and account is not None:
-                    saveResult = self.__saveEntity(account.toEntity())
+                    saveResult = self.saveEntity(account.toEntity())
 
                     if saveResult:
                         result = account
@@ -97,10 +101,9 @@ class BankController:
                      commit: bool = False):
         result = None
 
-        if (not firstName.isalpha() and not lastName.isalpha()
-                and cpf.isnumeric() and isinstance(age, int)):
+        if (cpf.isnumeric() and isinstance(age, int)):
 
-            person = PersonModel.create(
+            person = PersonModel.factoryPersonModel(
                 firstName=firstName,
                 lastName=lastName,
                 age=age,
@@ -109,7 +112,7 @@ class BankController:
 
             if commit and person is not None:
                 personEntity = person.toEntity()
-                saveResult = self.__saveEntity(personEntity)
+                saveResult = self.saveEntity(personEntity)
                 if saveResult:
                     result = person
             elif person is not None:
@@ -117,8 +120,12 @@ class BankController:
 
         return result
 
-    def accountByLogin(self, accountName: str, accountPassword: str):
-        result = None
+    def login(
+        self,
+        accountName: str,
+        accountPassword: str,
+    ) -> bool:
+        result = False
 
         try:
             accountResult = self.__session.query(AccountEntity).filter(
@@ -126,7 +133,12 @@ class BankController:
                 AccountEntity.account_password == accountPassword,
             ).one()
 
-            result = AccountModel.fromEntity(accountResult)
+            personResult = self.__session.query(PersonEntity).filter(
+                PersonEntity.person_id == accountResult.person_id, ).one()
+
+            self.__loggedAccount = AccountModel.fromEntity(accountResult)
+            self.__personLogged = PersonModel.fromEntity(personResult)
+            result = True
         except Exception as e:
             print(e)
 
@@ -173,6 +185,20 @@ class BankController:
 
         return result
 
+    # TODO: testar
+    def accountByName(self, accountName: str):
+        result = None
+
+        try:
+            accountResult = self.__session.query(AccountEntity).filter(
+                AccountEntity.account_name == accountName, ).one()
+
+            result = AccountModel.fromEntity(accountResult)
+        except Exception as e:
+            print(e)
+
+        return result
+
     def checkAccountNameExists(self, accountName: str):
         result = False
 
@@ -202,7 +228,85 @@ class BankController:
 
         return result
 
-    def __saveEntity(self, entity: Base) -> bool:
+    def withdraw(self, account: AccountModel, value: float) -> bool:
+        result = False
+
+        if (account is not None and value > 0 and account.balance >= value):
+            account.balance -= value
+            result = self.updateEntity(account.toEntity())
+
+            self.addLog(
+                account,
+                f'{value}',
+                'Saque',
+            )
+
+        return result
+
+    def deposit(self, account: AccountModel, value: float) -> bool:
+        result = False
+
+        if (account is not None and value > 0):
+            account.balance += value
+            result = self.updateEntity(account.toEntity())
+
+            self.addLog(
+                account,
+                f'{value}',
+                'Deposito',
+            )
+
+        return result
+
+    def transfer(
+        self,
+        accountFrom: AccountModel,
+        accountTo: AccountModel,
+        value: float,
+    ) -> bool:
+        result = False
+
+        if (accountFrom is not None and accountTo is not None and value > 0
+                and accountFrom.balance >= value):
+            accountFrom.balance -= value
+            accountTo.balance += value
+            result = self.updateEntity(accountFrom.toEntity())
+            result = self.updateEntity(accountTo.toEntity())
+
+            self.addLog(
+                accountFrom,
+                f"{value}",
+                'Transferencia',
+            )
+
+            self.addLog(
+                accountTo,
+                f"{value}",
+                'Transferencia',
+            )
+
+        return result
+
+    # TODO: testar
+    def transferByAccountName(
+        self,
+        accountFrom: AccountModel,
+        accountToName: str,
+        value: float,
+    ) -> bool:
+        result = False
+
+        if (accountFrom is not None and accountToName is not None and value > 0
+                and accountFrom.balance >= value):
+            accountTo = self.accountByName(accountToName)
+
+            if accountTo is not None:
+                result = self.transfer(accountFrom, accountTo, value)
+
+        return result
+
+    # TODO: testar
+    def saveEntity(self, entity: Base) -> bool:
         result = False
 
         try:
@@ -212,6 +316,84 @@ class BankController:
         except Exception as e:
             self.__session.rollback()
             print(e)
+
+        return result
+
+    # TODO: testar
+    def updateEntity(self, entity: Base) -> bool:
+        result = False
+
+        try:
+            self.__session.merge(entity)
+            self.__session.commit()
+            result = True
+        except Exception as e:
+            self.__session.rollback()
+            print(e)
+
+        return result
+
+    # TODO: testar
+    def deleteEntity(self, entity: Base) -> bool:
+        result = False
+
+        try:
+            self.__session.delete(entity)
+            self.__session.commit()
+            result = True
+        except Exception as e:
+            self.__session.rollback()
+            print(e)
+
+        return result
+
+    @property
+    def isLogged(self) -> bool:
+        return (self.__loggedAccount is not None
+                and self.__personLogged is not None)
+
+    @property
+    def loggedAccount(self) -> AccountModel | None:
+        return self.__loggedAccount
+
+    @property
+    def loggedPerson(self) -> PersonModel | None:
+        return self.__personLogged
+
+    def addLog(self, account: AccountModel, message: str, logType: str):
+        log = LogModel.factoryLogModel(
+            accountId=account.accountId,
+            logMessage=message,
+            logType=logType,
+        )
+
+        if log is not None:
+            self.saveEntity(log.toEntity())
+
+    def accountLogs(self, account: AccountModel) -> list[LogModel]:
+        result = []
+
+        try:
+            logs = self.__session.query(LogEntity).filter(
+                LogEntity.account_id == account.accountId, ).limit(10).all()
+
+            logs.sort(
+                key=lambda log: log.log_date,
+                reverse=True,
+            )
+
+            for log in logs:
+                result.append(LogModel.fromEntity(log))
+        except Exception as e:
+            print(e)
+
+        return result
+
+    def loggedAccountLogs(self) -> list[LogModel]:
+        result = []
+
+        if self.loggedAccount is not None:
+            result = self.accountLogs(self.loggedAccount)
 
         return result
 

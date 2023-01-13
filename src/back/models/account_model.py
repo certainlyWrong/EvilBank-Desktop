@@ -48,14 +48,14 @@ class AccountModel:
         return result
 
     @classmethod
-    def factoryEmpty(cls) -> 'AccountModel':
+    def empty(cls) -> 'AccountModel':
         return cls(
             str(uuid4()),
             str(uuid4()),
             '',
             '',
             0.0,
-            0.0,
+            1000,
         )
 
     @classmethod
@@ -88,28 +88,38 @@ class AccountModel:
     def personId(self) -> str:
         return self.__personId
 
+    @personId.setter
+    def personId(self, personId: str) -> None:
+        self.__personId = personId
+
     @property
     def accountName(self) -> str:
         return self.__accountName
 
     @accountName.setter
-    def accountName(self, accountName: str | None) -> None:
-        if accountName is not None:
-            self.__accountName = accountName
+    def accountName(self, accountName: str) -> None:
+        self.__accountName = accountName
 
     @property
     def password(self) -> str:
         return self.__password
 
     @password.setter
-    def password(self, password: str | None) -> None:
-        if password is not None:
-            self.__password = password
+    def password(self, password: str) -> None:
+        self.__password = password
 
     @property
     def balance(self) -> float:
         return self.__balance
 
+    @balance.setter
+    def balance(self, balance: float) -> None:
+        self.__balance = balance
+
     @property
     def limit(self) -> float:
         return self.__limit
+
+    @limit.setter
+    def limit(self, limit: float) -> None:
+        self.__limit = limit

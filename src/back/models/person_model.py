@@ -20,7 +20,7 @@ class PersonModel:
         self.__cpf = cpf
 
     @classmethod
-    def create(
+    def factoryPersonModel(
         cls,
         firstName: str,
         lastName: str,
@@ -30,18 +30,29 @@ class PersonModel:
         result = None
 
         # validar cpf, age, personName
-        if cpf.isnumeric() or len(cpf) != 11:
-            if not firstName.isalpha():
-                if isinstance(age, int):
-                    result = cls(
-                        str(uuid4()),
-                        firstName,
-                        lastName,
-                        age,
-                        cpf,
-                    )
+        if ((cpf.isnumeric() or len(cpf) != 11) and isinstance(age, int)
+                and age > 0 and age < 100 and len(lastName) > 1
+                and len(firstName) > 1):
+
+            result = cls(
+                str(uuid4()),
+                firstName,
+                lastName,
+                age,
+                cpf,
+            )
 
         return result
+
+    @classmethod
+    def empty(cls) -> 'PersonModel':
+        return cls(
+            str(uuid4()),
+            '',
+            '',
+            0,
+            '',
+        )
 
     @classmethod
     def fromEntity(cls, personEntity: PersonEntity) -> 'PersonModel':
@@ -70,13 +81,30 @@ class PersonModel:
     def firstName(self) -> str:
         return self.__firstName
 
+    @firstName.setter
+    def firstName(self, value: str):
+        self.__firstName = value
+
+    @property
     def lastName(self) -> str:
         return self.__lastName
+
+    @lastName.setter
+    def lastName(self, value: str):
+        self.__lastName = value
 
     @property
     def age(self) -> int:
         return self.__age
 
+    @age.setter
+    def age(self, value: int):
+        self.__age = value
+
     @property
     def cpf(self) -> str:
         return self.__cpf
+
+    @cpf.setter
+    def cpf(self, value: str):
+        self.__cpf = value

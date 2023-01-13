@@ -1,4 +1,3 @@
-
 from uuid import uuid4
 from datetime import datetime
 
@@ -30,43 +29,41 @@ class LogModel:
         self.__logMessage = logMessage
 
     @classmethod
-    def create(
+    def factoryLogModel(
         cls,
-        acocuntId: str,
+        accountId: str,
         logType: str,
         logMessage: str,
     ):
         result = None
 
-        if not logType.isalpha():
-            if not logMessage.isalpha():
-                result = cls(
-                    str(uuid4()),
-                    acocuntId,
-                    datetime.now(),
-                    logType,
-                    logMessage,
-                )
+        result = cls(
+            str(uuid4()),
+            accountId,
+            datetime.now(),
+            logType,
+            logMessage,
+        )
 
         return result
 
     @classmethod
     def fromEntity(cls, logEntity: LogEntity) -> 'LogModel':
         return cls(
-            logEntity.logId,
-            logEntity.acocuntId,
-            logEntity.logDate,
-            logEntity.logType,
-            logEntity.logMessage,
+            logEntity.log_id,  # type: ignore
+            logEntity.account_id,  # type: ignore
+            logEntity.log_date,  # type: ignore
+            logEntity.log_type,  # type: ignore
+            logEntity.log_message,  # type: ignore
         )
 
     def toEntity(self) -> LogEntity:
         return LogEntity(
-            self.__logId,
-            self.__acocuntId,
-            self.__logDate,
-            self.__logType,
-            self.__logMessage,
+            log_id=self.__logId,
+            account_id=self.__acocuntId,
+            log_date=self.__logDate,
+            log_type=self.__logType,
+            log_message=self.__logMessage,
         )
 
     @property
