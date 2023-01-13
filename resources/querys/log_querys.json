@@ -1,8 +1,0 @@
-{
-    "createLogTable": "CREATE TABLE IF NOT EXISTS logs (logId TEXT PRIMARY KEY, userId TEXT, date TEXT, logType TEXT, value TEXT)",
-    "addLog": "INSERT INTO logs (logId, userId, date, logType, value) VALUES (?, ?, ?, ?, ?)",
-    "getLogByUserId": "SELECT * FROM logs WHERE userId = ?",
-    "getLogByDate": "SELECT * FROM logs WHERE date = ?",
-    "getLogByType": "SELECT * FROM logs WHERE logType = ?",
-    "viewAllLogs": "SELECT * FROM logs"
-}
