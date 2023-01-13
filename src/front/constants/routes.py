@@ -1,0 +1,8 @@
+HOME_VIEW = '/'
+LOGIN_VIEW = '/login'
+DASHBOARD_VIEW = '/dashboard'
+WITHDRAW_VIEW = '/withdraw'
+DEPOSIT_VIEW = '/deposit'
+TRANSFER_VIEW = '/transfer'
+INSERT_ACCOUNT_VIEW = '/insert_account'
+SEARCH_ACCOUNT_VIEW = '/search_account'
