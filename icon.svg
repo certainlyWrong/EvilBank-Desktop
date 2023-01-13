@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="100mm"
+   height="100mm"
+   viewBox="0 0 100 100"
+   version="1.1"
+   id="svg5"
+   inkscape:version="1.1.2 (0a00cf5339, 2022-02-04)"
+   sodipodi:docname="icon.svg"
+   inkscape:export-filename="/media/adriano/bb9f53a0-5ee6-43ee-bc21-8ce3e92b6e02/repositórios/StudiedContent/4 Período/POO II/bankOfEvil/icon.png"
+   inkscape:export-xdpi="80.506516"
+   inkscape:export-ydpi="80.506516"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview7"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:document-units="mm"
+     showgrid="false"
+     width="100mm"
+     inkscape:zoom="0.5095679"
+     inkscape:cx="220.77529"
+     inkscape:cy="333.61599"
+     inkscape:window-width="1366"
+     inkscape:window-height="720"
+     inkscape:window-x="1024"
+     inkscape:window-y="20"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1" />
+  <defs
+     id="defs2" />
+  <g
+     inkscape:label="Camada 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <circle
+       style="fill:#800080;stroke-width:0.290963"
+       id="path53"
+       cx="50"
+       cy="50"
+       r="47.325359" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:91.2037px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.950037"
+       x="18.915928"
+       y="82.286469"
+       id="text1171"><tspan
+         sodipodi:role="line"
+         id="tspan1169"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:91.2037px;font-family:Loma;-inkscape-font-specification:Loma;fill:#ffffff;stroke-width:0.950037"
+         x="18.915928"
+         y="82.286469">E</tspan></text>
+  </g>
+</svg>
