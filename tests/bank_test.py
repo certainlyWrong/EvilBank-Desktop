@@ -34,7 +34,7 @@ class TestBank(unittest.TestCase):
 
         if result is not None:
             self.assertTrue(result.accountName == 'evil1')
-            self.assertTrue(result.password == '1234')
+            self.assertTrue(result.hashAccount == '1234')
             self.assertTrue(result.balance == 999.995)
             self.assertTrue(result.limit == 1000)
 
@@ -200,7 +200,7 @@ class TestBank(unittest.TestCase):
 
             if result is not None:
                 self.assertTrue(result.accountName == 'texugo1')
-                self.assertTrue(result.password == '1234')
+                self.assertTrue(result.hashAccount == '1234')
                 self.assertTrue(result.balance == 999.995)
                 self.assertTrue(result.limit == 1000)
 

@@ -10,14 +10,14 @@ class AccountModel:
         accountId: str,
         personId: str,
         accountName: str,
-        password: str,
+        accountHash: str,
         balance: float,
         limit: float,
     ):
         self.__accountId = accountId
         self.__personId = personId
         self.__accountName = accountName
-        self.__password = password
+        self.__hashAccount = accountHash
         self.__balance = balance
         self.__limit = limit
 
@@ -65,7 +65,7 @@ class AccountModel:
             accountEntity.account_id,  # type: ignore
             accountEntity.person_id,  # type: ignore
             accountEntity.account_name,  # type: ignore
-            accountEntity.account_password,  # type: ignore
+            accountEntity.account_hash,  # type: ignore
             accountEntity.account_balance,  # type: ignore
             accountEntity.account_limit,  # type: ignore
         )
@@ -75,7 +75,7 @@ class AccountModel:
             account_id=self.accountId,
             person_id=self.personId,
             account_name=self.accountName,
-            account_password=self.password,
+            account_hash=self.hashAccount,
             account_balance=self.balance,
             account_limit=self.limit,
         )
@@ -101,12 +101,12 @@ class AccountModel:
         self.__accountName = accountName
 
     @property
-    def password(self) -> str:
-        return self.__password
+    def hashAccount(self) -> str:
+        return self.__hashAccount
 
-    @password.setter
-    def password(self, password: str) -> None:
-        self.__password = password
+    @hashAccount.setter
+    def hashAccount(self, hashAccount: str) -> None:
+        self.__hashAccount = hashAccount
 
     @property
     def balance(self) -> float:

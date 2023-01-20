@@ -1,3 +1,4 @@
+import hashlib
 import sqlalchemy as sa
 from sqlalchemy.orm import sessionmaker
 
@@ -127,10 +128,12 @@ class BankController:
     ) -> bool:
         result = False
 
+        accountHash = hashlib.sha256(accountPassword.encode()).hexdigest()
+
         try:
             accountResult = self.__session.query(AccountEntity).filter(
                 AccountEntity.account_name == accountName,
-                AccountEntity.account_password == accountPassword,
+                AccountEntity.account_hash == accountHash,
             ).one()
 
             personResult = self.__session.query(PersonEntity).filter(
@@ -198,6 +201,10 @@ class BankController:
             print(e)
 
         return result
+
+    # TODO: Implementar conta que busque um usuário pelo CPF
+    def accountByCPF(self, cpf: str) -> AccountModel:
+        ...
 
     def checkAccountNameExists(self, accountName: str):
         result = False
@@ -276,13 +283,13 @@ class BankController:
             self.addLog(
                 accountFrom,
                 f"{value}",
-                'Transferencia',
+                f'Transferencia: {accountTo.accountName}',
             )
 
             self.addLog(
                 accountTo,
                 f"{value}",
-                'Transferencia',
+                f'Transferencia: {accountFrom.accountName}',
             )
 
         return result

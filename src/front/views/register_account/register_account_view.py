@@ -1,3 +1,5 @@
+import hashlib
+
 import flet as ft
 from flet import (
     Column,
@@ -79,7 +81,8 @@ def registerAccountView(page: ft.Page, bank: BankController):
             account.accountName = textFieldUserName.value
             textFieldUserName.value = ""
 
-            account.password = textFieldUserPassword.value
+            account.hashAccount = hashlib.sha256(
+                textFieldUserPassword.value.encode()).hexdigest()
             textFieldUserPassword.value = ""
 
             result1 = bank.saveEntity(person.toEntity())
@@ -95,8 +98,9 @@ def registerAccountView(page: ft.Page, bank: BankController):
                         ),
                     ]),
                     bgcolor=colors.SECONDARY_CONTAINER,
+                    open=True,
                 )
-                page.snack_bar.open = True
+                # page.snack_bar.open = True
                 page.go(routes.HOME_VIEW)
             else:
                 print("Erro ao criar conta!")

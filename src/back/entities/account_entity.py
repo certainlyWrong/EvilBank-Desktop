@@ -14,6 +14,6 @@ class AccountEntity(Base):
     )
 
     account_name = sa.Column(sa.String(255), nullable=False, unique=True)
-    account_password = sa.Column(sa.String(255), nullable=False)
+    account_hash = sa.Column(sa.CHAR(64), nullable=False)
     account_balance = sa.Column(sa.Float, nullable=False)
     account_limit = sa.Column(sa.Float, nullable=False)

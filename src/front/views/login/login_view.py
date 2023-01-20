@@ -64,8 +64,9 @@ def loginView(page: ft.Page, bank: BankController):
                         ),
                     ]),
                     bgcolor=colors.SECONDARY_CONTAINER,
+                    open=True,
                 )
-                page.snack_bar.open = True
+                # page.snack_bar.open = True
                 page.update()
 
     return ft.View(
