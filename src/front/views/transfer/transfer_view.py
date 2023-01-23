@@ -14,19 +14,16 @@ from flet import (
 )
 
 from ...constants import routes
-from ....back.models.person_model import PersonModel
-from ....back.models.account_model import AccountModel
-from ....back.controllers.bank_controller import BankController
+from ....back.controllers.client_front_controller import ClientController
 
 
-def transferView(page: ft.Page, bank: BankController):
+def transferView(page: ft.Page, client: ClientController):
+    result = client.loggedAccountInfos()
+    account = result['account']
+    person = result['person']
 
-    account = AccountModel.empty()
-    person = PersonModel.empty()
-
-    if (bank.loggedAccount is not None and bank.loggedPerson is not None):
-        person = bank.loggedPerson
-        account = bank.loggedAccount
+    limit = account['limit']
+    balance = account['balance']
 
     textFieldToAccountName = TextField(
         label="Conta Destino:",
@@ -42,16 +39,10 @@ def transferView(page: ft.Page, bank: BankController):
         if (textFieldValue.value is not None
                 and textFieldToAccountName.value is not None):
 
-            result = False
-
             value = float(textFieldValue.value)
+            accountName = textFieldToAccountName.value
 
-            if bank.loggedAccount is not None:
-                result = bank.transferByAccountName(
-                    bank.loggedAccount,
-                    textFieldToAccountName.value,
-                    value,
-                )
+            result = client.transfer(accountName, value)
 
             if result:
                 page.snack_bar = ft.SnackBar(
@@ -88,12 +79,12 @@ def transferView(page: ft.Page, bank: BankController):
             Column(
                 [
                     Column([
-                        Text(f"User: {account.accountName}"),
-                        Text(f"Name: {person.firstName} {person.lastName}"),
-                        Text(f"CPF: {person.cpf}"),
+                        Text(f"User: {account['accountName']}"),
                         Text(
-                            f"Balance: R$ {account.balance}/R$ {account.limit}"
+                            f"Name: {person['firstName']} {person['lastName']}"
                         ),
+                        Text(f"CPF: {person['cpf']}"),
+                        Text(f"Balance: R$ {balance}/R$ {limit}"),
                     ]),
                     Container(height=20),
                     textFieldToAccountName,

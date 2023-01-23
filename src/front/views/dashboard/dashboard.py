@@ -15,21 +15,16 @@ from flet import (
 )
 
 from ...constants import routes
-from ....back.models.account_model import AccountModel
-from ....back.models.person_model import PersonModel
-from ....back.controllers.bank_controller import BankController
+from ....back.controllers.client_front_controller import ClientController
 
 
-def dashboardView(page: ft.Page, bank: BankController):
+def dashboardView(page: ft.Page, client: ClientController):
 
-    account = AccountModel.empty()
-    person = PersonModel.empty()
+    result = client.loggedAccountInfos()
 
-    if (bank.loggedAccount is not None and bank.loggedPerson is not None):
-        person = bank.loggedPerson
-        account = bank.loggedAccount
-
-    logs = bank.loggedAccountLogs()
+    logs = result['logs']
+    account = result['account']
+    person = result['person']
 
     return ft.View(
         routes.DASHBOARD_VIEW,
@@ -41,11 +36,13 @@ def dashboardView(page: ft.Page, bank: BankController):
                         color=colors.PRIMARY,
                         size=20,
                     ),
-                    Text("Usuário: " + account.accountName),
-                    Text("Nome: " + person.firstName + ' ' + person.lastName),
-                    Text("CPF: " + person.cpf),
-                    Text("Balance: " + str(account.balance) + ' / ' +
-                         "Limit: " + str(account.limit)),
+                    Text("Usuário: " + account['accountName']),
+                    Text(
+                        "Nome: " + person['firstName'] + ' ' +
+                        person['lastName'], ),
+                    Text("CPF: " + person['cpf']),
+                    Text("Balance: " + str(account['balance']) + ' / ' +
+                         "Limit: " + str(account['limit'])),
                 ],
                 wrap=True,
                 horizontal_alignment=CrossAxisAlignment.CENTER,
@@ -85,9 +82,9 @@ def dashboardView(page: ft.Page, bank: BankController):
                         Container(
                             Row([
                                 Column([
-                                    Text(f"Data: {log.logDate}"),
-                                    Text(f"Tipo: {log.logType}"),
-                                    Text(f"Valor: {log.logMessage}"),
+                                    Text(f"Data: {log['logDate']}"),
+                                    Text(f"Tipo: {log['logType']}"),
+                                    Text(f"Valor: {log['logMessage']}"),
                                 ])
                             ]),
                             margin=10,

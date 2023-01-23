@@ -1,5 +1,3 @@
-import hashlib
-
 import flet as ft
 from flet import (
     Column,
@@ -16,12 +14,10 @@ from flet import (
 
 from ...constants import routes
 
-from ....back.models.person_model import PersonModel
-from ....back.models.account_model import AccountModel
-from ....back.controllers.bank_controller import BankController
+from ....back.controllers.client_front_controller import ClientController
 
 
-def registerAccountView(page: ft.Page, bank: BankController):
+def registerAccountView(page: ft.Page, clientController: ClientController):
 
     textFieldUserFirstName = TextField(
         label="Nome:",
@@ -61,34 +57,34 @@ def registerAccountView(page: ft.Page, bank: BankController):
                 and textFieldUserPassword.value is not None
                 and textFieldUserAge.value is not None):
 
-            account = AccountModel.empty()
-            person = PersonModel.empty()
-
-            account.personId = person.personId
-
-            person.firstName = textFieldUserFirstName.value
+            firstName = textFieldUserFirstName.value
             textFieldUserFirstName.value = ""
 
-            person.lastName = textFieldUserLastName.value
+            lastName = textFieldUserLastName.value
             textFieldUserLastName.value = ""
 
-            person.cpf = textFieldUserCPF.value
+            cpf = textFieldUserCPF.value
             textFieldUserCPF.value = ""
 
-            person.age = int(textFieldUserAge.value)
+            age = textFieldUserAge.value
             textFieldUserAge.value = ""
 
-            account.accountName = textFieldUserName.value
+            accountName = textFieldUserName.value
             textFieldUserName.value = ""
 
-            account.hashAccount = hashlib.sha256(
-                textFieldUserPassword.value.encode()).hexdigest()
+            passWord = textFieldUserPassword.value
             textFieldUserPassword.value = ""
 
-            result1 = bank.saveEntity(person.toEntity())
-            result2 = bank.saveEntity(account.toEntity())
+            result = clientController.register(
+                firstName,
+                lastName,
+                cpf,
+                int(age),
+                accountName,
+                passWord,
+            )
 
-            if result1 and result2:
+            if result['status'] == 'success':
                 page.snack_bar = ft.SnackBar(
                     Row([
                         Icon(icons.CHECK, color=colors.ON_SECONDARY),
@@ -100,7 +96,6 @@ def registerAccountView(page: ft.Page, bank: BankController):
                     bgcolor=colors.SECONDARY_CONTAINER,
                     open=True,
                 )
-                # page.snack_bar.open = True
                 page.go(routes.HOME_VIEW)
             else:
                 print("Erro ao criar conta!")
@@ -113,8 +108,9 @@ def registerAccountView(page: ft.Page, bank: BankController):
                         ),
                     ]),
                     bgcolor=colors.ERROR_CONTAINER,
+                    open=True,
                 )
-                page.snack_bar.open = True
+            page.update()
 
     return ft.View(
         routes.INSERT_ACCOUNT_VIEW,

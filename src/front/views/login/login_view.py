@@ -13,10 +13,10 @@ from flet import (
 )
 
 from ...constants import routes
-from ....back.controllers.bank_controller import BankController
+from ....back.controllers.client_front_controller import ClientController
 
 
-def loginView(page: ft.Page, bank: BankController):
+def loginView(page: ft.Page, client: ClientController):
 
     textFieldUserName = TextField(
         label="Usuário:",
@@ -37,7 +37,7 @@ def loginView(page: ft.Page, bank: BankController):
             password = textFieldUserPassword.value
             textFieldUserPassword.value = ""
 
-            result = bank.login(user, password)
+            result = client.login(user, password)
 
             if result:
                 page.snack_bar = ft.SnackBar(

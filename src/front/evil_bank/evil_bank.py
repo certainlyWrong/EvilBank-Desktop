@@ -1,3 +1,5 @@
+import atexit
+
 import flet as ft
 from flet import (
     colors,
@@ -10,7 +12,7 @@ from flet import (
 from ..constants.routes import (
     HOME_VIEW,
     INSERT_ACCOUNT_VIEW,
-    SEARCH_ACCOUNT_VIEW,
+    # SEARCH_ACCOUNT_VIEW,
     LOGIN_VIEW,
     DASHBOARD_VIEW,
     WITHDRAW_VIEW,
@@ -18,17 +20,17 @@ from ..constants.routes import (
     TRANSFER_VIEW,
 )
 
+from ...back.controllers.client_front_controller import ClientController
+
 from ..views.home.home_view import homeView
-from ..views.dashboard.dashboard import dashboardView
 from ..views.register_account.register_account_view import (
     registerAccountView, )
-from ..views.search_account.search_account_view import searchAccountView
+from ..views.dashboard.dashboard import dashboardView
+# from ..views.search_account.search_account_view import searchAccountView
 from ..views.withdraw.withdraw_view import withdrawView
 from ..views.deposit.deposit_view import depositView
 from ..views.transfer.transfer_view import transferView
 from ..views.login.login_view import loginView
-
-from ...back.controllers.bank_controller import BankController
 
 
 def evilBankApp(page: ft.Page):
@@ -41,10 +43,14 @@ def evilBankApp(page: ft.Page):
     page.theme = Theme(color_scheme_seed=colors.PURPLE)
     page.dark_theme = Theme(color_scheme_seed=colors.PURPLE)
 
-    bank = BankController.factorybankController(
-        'evil bank',
-        '1234',
-    )
+    clientController = ClientController.factoryHostAndPort("localhost", 8000)
+
+    def close_handler():
+        print("Closing client\n\n")
+        clientController.close()
+        page.close()
+
+    atexit.register(close_handler)
 
     def route_change(route):
         if page.route == HOME_VIEW:
@@ -52,26 +58,26 @@ def evilBankApp(page: ft.Page):
             page.views.append(homeView(page))
 
         if page.route == INSERT_ACCOUNT_VIEW:
-            page.views.append(registerAccountView(page, bank))
+            page.views.append(registerAccountView(page, clientController))
 
-        if page.route == SEARCH_ACCOUNT_VIEW:
-            page.views.append(searchAccountView(page, bank))
+        # if page.route == SEARCH_ACCOUNT_VIEW:
+        #     page.views.append(searchAccountView(page, bank))
 
         if page.route == LOGIN_VIEW:
-            page.views.append(loginView(page, bank))
+            page.views.append(loginView(page, clientController))
 
         if page.route == DASHBOARD_VIEW:
             page.views.clear()
-            page.views.append(dashboardView(page, bank))
+            page.views.append(dashboardView(page, clientController))
 
         if page.route == WITHDRAW_VIEW:
-            page.views.append(withdrawView(page, bank))
+            page.views.append(withdrawView(page, clientController))
 
         if page.route == DEPOSIT_VIEW:
-            page.views.append(depositView(page, bank))
+            page.views.append(depositView(page, clientController))
 
         if page.route == TRANSFER_VIEW:
-            page.views.append(transferView(page, bank))
+            page.views.append(transferView(page, clientController))
 
         page.update()
 
@@ -81,7 +87,8 @@ def evilBankApp(page: ft.Page):
         page.go(top_view.route)
 
     def close():
-        bank.dispose()
+        print("Closing client\n\n")
+        clientController.close()
         page.close()
 
     page.on_route_change = route_change
