@@ -20,7 +20,7 @@ from ..constants.routes import (
     TRANSFER_VIEW,
 )
 
-from ...back.controllers.client_front_controller import ClientController
+from ...back.controllers.client_front_controller import ClientFrontController
 
 from ..views.home.home_view import homeView
 from ..views.register_account.register_account_view import (
@@ -43,7 +43,8 @@ def evilBankApp(page: ft.Page):
     page.theme = Theme(color_scheme_seed=colors.PURPLE)
     page.dark_theme = Theme(color_scheme_seed=colors.PURPLE)
 
-    clientController = ClientController.factoryHostAndPort("localhost", 8000)
+    clientController = ClientFrontController.factoryHostAndPort(
+        "localhost", 8000)
 
     def close_handler():
         print("Closing client\n\n")

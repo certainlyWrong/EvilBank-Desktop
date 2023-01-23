@@ -14,10 +14,11 @@ from flet import (
 
 from ...constants import routes
 
-from ....back.controllers.client_front_controller import ClientController
+from ....back.controllers.client_front_controller import ClientFrontController
 
 
-def registerAccountView(page: ft.Page, clientController: ClientController):
+def registerAccountView(page: ft.Page,
+                        clientController: ClientFrontController):
 
     textFieldUserFirstName = TextField(
         label="Nome:",

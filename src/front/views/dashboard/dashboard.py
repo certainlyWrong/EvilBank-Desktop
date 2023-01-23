@@ -15,10 +15,10 @@ from flet import (
 )
 
 from ...constants import routes
-from ....back.controllers.client_front_controller import ClientController
+from ....back.controllers.client_front_controller import ClientFrontController
 
 
-def dashboardView(page: ft.Page, client: ClientController):
+def dashboardView(page: ft.Page, client: ClientFrontController):
 
     result = client.loggedAccountInfos()
 

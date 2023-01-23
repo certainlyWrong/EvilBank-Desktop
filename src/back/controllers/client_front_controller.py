@@ -2,7 +2,7 @@ import json
 import socket
 
 
-class ClientController:
+class ClientFrontController:
 
     def __init__(self, client):
         self.__client: socket.socket = client
@@ -116,6 +116,7 @@ class ClientController:
 
 
 if __name__ == '__main__':
-    client_controller = ClientController.factoryHostAndPort('localhost', 8080)
+    client_controller = ClientFrontController.factoryHostAndPort(
+        'localhost', 8080)
 
     client_controller.start()
